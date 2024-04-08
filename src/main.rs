@@ -4,6 +4,7 @@ use axum::{
     routing::get,
     Router,
     response::Json,
+    http::StatusCode
 };
 use serde_json::{Value, json};
 
@@ -15,17 +16,17 @@ async fn main() {
     axum::serve(listener, app).await.unwrap();
 }
 
-async fn get_pufa_word() -> Json<Value> {
-    Json(match pufa::get_result().await {
-        Ok(value) => json!({
+async fn get_pufa_word() -> (StatusCode, Json<Value>) {
+    match pufa::get_result().await {
+        Ok(value) => (StatusCode::OK, Json(json!({
             "success": true,
             "data": value,
             "error_message": null
-        }),
-        Err(value) => json!({
+        }))),
+        Err(value) => (StatusCode::SERVICE_UNAVAILABLE, Json(json!({
             "success": false,
             "data": null,
             "error_message": value.to_string()
-        }),
-    })
+        }))),
+    }
 }
