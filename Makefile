@@ -1,5 +1,5 @@
-version?=1.1.0
-image_name=filipponik/pufa-rs
+version=1.1.0
+image=filipponik/pufa-rs
 
 # Build docker images
 build:
