@@ -1,9 +1,14 @@
 version=1.1.0
 image=filipponik/pufa-rs
+platforms=linux/amd64,linux/arm64
 
 # Build docker images
 build:
-	docker build . -t $(image_name):$(version) -t $(image_name):latest
+	docker build . -t $(image):$(version) -t $(image):latest
+
+# Build and push multiplatform docker images
+build-multiplatform:
+	docker buildx build --platform=$(platforms) -t $(image):$(version) -t $(image):latest --push .
 
 # Run tests
 test:

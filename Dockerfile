@@ -1,4 +1,4 @@
-FROM rust:alpine as build
+FROM rust:alpine3.19 as build
 LABEL authors="max"
 
 WORKDIR app
@@ -16,7 +16,7 @@ COPY Cargo.lock Cargo.toml ./
 RUN cargo build --release \
     && upx --best --lzma target/release/pufa-rs
 
-FROM alpine:latest
+FROM alpine:3.19
 WORKDIR app
 COPY --from=build /app/target/release/pufa-rs .
 
