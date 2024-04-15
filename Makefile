@@ -10,6 +10,9 @@ build:
 build-multiplatform:
 	docker buildx build --platform=$(platforms) -t $(image):$(version) -t $(image):latest --push .
 
+fix:
+	cargo fmt && cargo fix && cargo clippy
+
 # Run tests
 test:
 	cargo test
