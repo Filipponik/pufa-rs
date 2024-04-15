@@ -1,12 +1,12 @@
-use regex::Regex;
-use chrono;
 use base64::prelude::*;
+use chrono;
+use regex::Regex;
 
 pub enum PufaError {
     UuidRequestFailed,
     UuidParseFailed,
     WordRequestFailed,
-    WordParseFailed
+    WordParseFailed,
 }
 
 impl PufaError {
@@ -16,7 +16,8 @@ impl PufaError {
             PufaError::UuidParseFailed => "uuid_parse_failed",
             PufaError::WordRequestFailed => "word_request_failed",
             PufaError::WordParseFailed => "word_parse_failed",
-        }.to_string()
+        }
+        .to_string()
     }
 }
 
@@ -40,8 +41,7 @@ async fn get_current_uuid() -> Result<String, PufaError> {
         .map_err(|_| PufaError::UuidParseFailed)
 }
 
-async fn get_current_word(uuid: &str, date: &str) -> Result<String, PufaError>
-{
+async fn get_current_word(uuid: &str, date: &str) -> Result<String, PufaError> {
     let base64_encoded_token: String = BASE64_STANDARD.encode(format!("{uuid}-{date}"));
     let url: String = format!("https://pufa.afup.org/mots/{base64_encoded_token}.txt");
 
@@ -53,11 +53,12 @@ async fn get_current_word(uuid: &str, date: &str) -> Result<String, PufaError>
         .map_err(|_| PufaError::WordParseFailed)
 }
 
-fn get_uuid_from_js(js_code: &str) -> Result<String, PufaError>
-{
-    let matched = Regex::new(r"[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}")
-        .unwrap()
-        .find(js_code);
+fn get_uuid_from_js(js_code: &str) -> Result<String, PufaError> {
+    let matched = Regex::new(
+        r"[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}",
+    )
+    .unwrap()
+    .find(js_code);
 
     match matched {
         Some(value) => Ok(value.as_str().to_string()),
