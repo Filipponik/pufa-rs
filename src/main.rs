@@ -18,11 +18,11 @@ impl AppState {
         self.updated_at.to_rfc3339().to_string()
     }
 
-    fn set_current_updated_at(&mut self) -> () {
+    fn set_current_updated_at(&mut self) {
         self.updated_at = chrono::offset::Utc::now();
     }
 
-    fn set_last_word(&mut self, new_word: &str) -> () {
+    fn set_last_word(&mut self, new_word: &str) {
         self.just_started = false;
         self.last_word = new_word.to_string();
     }
@@ -47,7 +47,7 @@ async fn main() {
 async fn get_pufa_word() -> (StatusCode, Json<Value>) {
     let read_lock = STATE.read().await;
     let seconds_diff: i64 =
-        chrono::offset::Utc::now().timestamp() - &read_lock.updated_at.timestamp();
+        chrono::offset::Utc::now().timestamp() - read_lock.updated_at.timestamp();
 
     if !&read_lock.just_started && seconds_diff < 60 {
         return (
@@ -63,7 +63,7 @@ async fn get_pufa_word() -> (StatusCode, Json<Value>) {
     drop(read_lock);
 
     let pufa_word = pufa::get_result().await;
-    return match pufa_word {
+    match pufa_word {
         Err(error) => (
             StatusCode::SERVICE_UNAVAILABLE,
             Json(json!({
@@ -89,5 +89,5 @@ async fn get_pufa_word() -> (StatusCode, Json<Value>) {
                 })),
             )
         }
-    };
+    }
 }

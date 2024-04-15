@@ -1,5 +1,4 @@
 use base64::prelude::*;
-use chrono;
 use regex::Regex;
 
 pub enum PufaError {
@@ -9,15 +8,15 @@ pub enum PufaError {
     WordParseFailed,
 }
 
-impl PufaError {
-    pub fn to_string(&self) -> String {
-        match &self {
+impl std::fmt::Display for PufaError {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        let result: &str = match &self {
             PufaError::UuidRequestFailed => "uuid_request_failed",
             PufaError::UuidParseFailed => "uuid_parse_failed",
             PufaError::WordRequestFailed => "word_request_failed",
             PufaError::WordParseFailed => "word_parse_failed",
-        }
-        .to_string()
+        };
+        write!(f, "{result}")
     }
 }
 

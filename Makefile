@@ -1,4 +1,4 @@
-version=1.1.0
+version=1.1.1
 image=filipponik/pufa-rs
 platforms=linux/amd64,linux/arm64
 
