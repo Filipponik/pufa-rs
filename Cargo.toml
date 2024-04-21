@@ -12,7 +12,6 @@ codegen-units = 1
 panic = "abort"
 
 [dependencies]
-either = "1.10.0"
 reqwest = "0.12.2"
 tokio={ version = "1.32.0", features = ["full"] }
 serde = { version = "1.0", features = ["derive"] }
