@@ -1,6 +1,6 @@
 FROM rust:alpine3.19 as build
 LABEL authors="max"
-ARG filename=foe-rs
+ARG filename=pufa-rs
 
 WORKDIR app
 
