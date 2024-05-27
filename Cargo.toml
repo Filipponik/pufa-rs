@@ -1,7 +1,12 @@
 [package]
 name = "pufa-rs"
-version = "0.1.0"
+version = "1.2.0"
+authors = ["Filipponik"]
 edition = "2021"
+description = "Today pufa word"
+repository = "https://github.com/Filipponik/pufa-rs"
+keywords = ["axum-rs", "server", "web-server"]
+categories = ["web-programming", "web-programming::http-server"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [profile.release]

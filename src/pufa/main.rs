@@ -1,5 +1,5 @@
-use base64::Engine;
 use base64::prelude::BASE64_STANDARD;
+use base64::Engine;
 use regex::Regex;
 
 pub enum PufaError {
@@ -57,8 +57,8 @@ fn get_uuid_from_js(js_code: &str) -> Result<String, PufaError> {
     let matched = Regex::new(
         r"[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}",
     )
-        .unwrap()
-        .find(js_code);
+    .unwrap()
+    .find(js_code);
 
     match matched {
         Some(value) => Ok(value.as_str().to_string()),

@@ -1,18 +1,18 @@
+use crate::pufa::main;
+use crate::pufa::main::PufaError;
 use chrono::{DateTime, Utc};
 use lazy_static::lazy_static;
 use tokio::sync::RwLock;
-use crate::pufa::main;
-use crate::pufa::main::PufaError;
 
 #[derive(Debug, Clone)]
 pub struct CacheState {
     just_started: bool,
-    last_word: String,
-    updated_at: DateTime<Utc>,
+    pub last_word: String,
+    pub updated_at: DateTime<Utc>,
 }
 
 impl CacheState {
-    fn get_formatted_updated_at(&self) -> String {
+    pub fn get_formatted_updated_at(&self) -> String {
         self.updated_at.to_rfc3339().to_string()
     }
 

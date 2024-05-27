@@ -1,4 +1,4 @@
-version=1.1.1
+version=1.2.0
 image=filipponik/pufa-rs
 platforms=linux/amd64,linux/arm64
 
@@ -12,7 +12,7 @@ build-multiplatform:
 
 fix:
 	cargo fmt
-	cargo fix
+	cargo fix --allow-dirty --allow-staged
 	cargo clippy
 
 # Run tests
