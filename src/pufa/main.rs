@@ -3,19 +3,19 @@ use base64::Engine;
 use regex::Regex;
 
 pub enum PufaError {
-    UuidRequestFailed,
-    UuidParseFailed,
-    WordRequestFailed,
-    WordParseFailed,
+    UuidRequest,
+    UuidParse,
+    WordRequest,
+    WordParse,
 }
 
 impl std::fmt::Display for PufaError {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         let result: &str = match &self {
-            PufaError::UuidRequestFailed => "uuid_request_failed",
-            PufaError::UuidParseFailed => "uuid_parse_failed",
-            PufaError::WordRequestFailed => "word_request_failed",
-            PufaError::WordParseFailed => "word_parse_failed",
+            Self::UuidRequest => "uuid_request_failed",
+            Self::UuidParse => "uuid_parse_failed",
+            Self::WordRequest => "word_request_failed",
+            Self::WordParse => "word_parse_failed",
         };
         write!(f, "{result}")
     }
@@ -35,10 +35,10 @@ fn get_date_formatted() -> String {
 async fn get_current_uuid() -> Result<String, PufaError> {
     reqwest::get("https://pufa.afup.org/js/instanceConfiguration.js")
         .await
-        .map_err(|_| PufaError::UuidRequestFailed)?
+        .map_err(|_| PufaError::UuidRequest)?
         .text()
         .await
-        .map_err(|_| PufaError::UuidParseFailed)
+        .map_err(|_| PufaError::UuidParse)
 }
 
 async fn get_current_word(uuid: &str, date: &str) -> Result<String, PufaError> {
@@ -47,10 +47,10 @@ async fn get_current_word(uuid: &str, date: &str) -> Result<String, PufaError> {
 
     reqwest::get(url)
         .await
-        .map_err(|_| PufaError::WordRequestFailed)?
+        .map_err(|_| PufaError::WordRequest)?
         .text()
         .await
-        .map_err(|_| PufaError::WordParseFailed)
+        .map_err(|_| PufaError::WordParse)
 }
 
 fn get_uuid_from_js(js_code: &str) -> Result<String, PufaError> {
@@ -60,8 +60,7 @@ fn get_uuid_from_js(js_code: &str) -> Result<String, PufaError> {
     .unwrap()
     .find(js_code);
 
-    match matched {
-        Some(value) => Ok(value.as_str().to_string()),
-        _ => Err(PufaError::UuidRequestFailed),
-    }
+    matched.map_or(Err(PufaError::UuidRequest), |value| {
+        Ok(value.as_str().to_string())
+    })
 }

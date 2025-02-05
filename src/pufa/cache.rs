@@ -13,7 +13,7 @@ pub struct CacheState {
 
 impl CacheState {
     pub fn get_formatted_updated_at(&self) -> String {
-        self.updated_at.to_rfc3339().to_string()
+        self.updated_at.to_rfc3339()
     }
 
     fn set_current_updated_at(&mut self) {
@@ -29,7 +29,7 @@ impl CacheState {
 lazy_static! {
     static ref STATE: RwLock<CacheState> = RwLock::new(CacheState {
         just_started: true,
-        last_word: "".to_string(),
+        last_word: String::new(),
         updated_at: chrono::offset::Utc::now(),
     });
 }
