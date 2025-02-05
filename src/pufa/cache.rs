@@ -17,7 +17,7 @@ impl CacheState {
     }
 
     fn set_current_updated_at(&mut self) {
-        self.updated_at = chrono::offset::Utc::now();
+        self.updated_at = Utc::now();
     }
 
     fn set_last_word(&mut self, new_word: &str) {
@@ -30,14 +30,14 @@ lazy_static! {
     static ref STATE: RwLock<CacheState> = RwLock::new(CacheState {
         just_started: true,
         last_word: String::new(),
-        updated_at: chrono::offset::Utc::now(),
+        updated_at: Utc::now(),
     });
 }
 
 pub async fn get_cached_pufa_word() -> Result<CacheState, PufaError> {
     let read_lock = STATE.read().await;
     let seconds_diff: i64 =
-        chrono::offset::Utc::now().timestamp() - read_lock.updated_at.timestamp();
+        Utc::now().timestamp() - read_lock.updated_at.timestamp();
 
     if !&read_lock.just_started && seconds_diff < 60 {
         return Ok(read_lock.clone());
