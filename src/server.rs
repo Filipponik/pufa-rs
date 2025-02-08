@@ -8,7 +8,7 @@ use tracing::info;
 
 #[derive(Debug, Error)]
 pub enum Error {
-    #[error("Server error {0}")]
+    #[error("Server error: {0}")]
     Server(#[from] std::io::Error),
 }
 

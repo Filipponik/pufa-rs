@@ -1,19 +1,14 @@
-use thiserror::Error;
+use tracing::error;
 
 mod pufa;
 mod server;
 mod config;
 
-#[derive(Debug, Error)]
-enum AppError {
-    #[error("App error: {0}")]
-    Server(#[from] server::Error),
-}
-
 #[tokio::main]
-async fn main() -> Result<(), AppError> {
+async fn main() {
     config::setup_tracing();
-    server::start_server().await?;
 
-    Ok(())
+    if let Err(e) = server::start_server().await {
+        error!("{e}")
+    }
 }
