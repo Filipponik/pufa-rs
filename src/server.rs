@@ -12,10 +12,10 @@ pub enum Error {
     Server(#[from] std::io::Error),
 }
 
-pub async fn start_server() -> Result<(), Error> {
+pub async fn start() -> Result<(), Error> {
     let app = Router::new().route("/", get(get_pufa_word));
     let port: u16 = 3000;
-    let addr = format!("0.0.0.0:{}", port);
+    let addr = format!("0.0.0.0:{port}");
 
     let listener = tokio::net::TcpListener::bind(&addr).await?;
     info!("Server started at http://{addr}, connect from localhost at http://localhost:{port}");
@@ -30,7 +30,7 @@ struct Response {
 }
 
 impl Response {
-    fn new(status: StatusCode, body: ResponseBody) -> Self {
+    const fn new(status: StatusCode, body: ResponseBody) -> Self {
         Self { status, body }
     }
 

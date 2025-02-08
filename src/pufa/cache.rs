@@ -5,13 +5,13 @@ use lazy_static::lazy_static;
 use tokio::sync::RwLock;
 
 #[derive(Debug, Clone)]
-pub struct CacheState {
+pub struct State {
     just_started: bool,
     pub last_word: String,
     pub updated_at: DateTime<Utc>,
 }
 
-impl CacheState {
+impl State {
     pub fn get_formatted_updated_at(&self) -> String {
         self.updated_at.to_rfc3339()
     }
@@ -27,17 +27,16 @@ impl CacheState {
 }
 
 lazy_static! {
-    static ref STATE: RwLock<CacheState> = RwLock::new(CacheState {
+    static ref STATE: RwLock<State> = RwLock::new(State {
         just_started: true,
         last_word: String::new(),
         updated_at: Utc::now(),
     });
 }
 
-pub async fn get_cached_pufa_word() -> Result<CacheState, PufaError> {
+pub async fn get_cached_pufa_word() -> Result<State, PufaError> {
     let read_lock = STATE.read().await;
-    let seconds_diff: i64 =
-        Utc::now().timestamp() - read_lock.updated_at.timestamp();
+    let seconds_diff: i64 = Utc::now().timestamp() - read_lock.updated_at.timestamp();
 
     if !&read_lock.just_started && seconds_diff < 60 {
         return Ok(read_lock.clone());

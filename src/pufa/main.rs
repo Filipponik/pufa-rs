@@ -1,7 +1,9 @@
 use base64::prelude::BASE64_STANDARD;
 use base64::Engine;
 use regex::Regex;
+use thiserror::Error;
 
+#[derive(Debug, Error)]
 pub enum PufaError {
     UuidRequest,
     UuidParse,
