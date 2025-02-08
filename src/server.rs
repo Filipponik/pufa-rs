@@ -3,16 +3,25 @@ use axum::http::StatusCode;
 use axum::routing::get;
 use axum::{Json, Router};
 use serde::Serialize;
+use thiserror::Error;
 use tracing::info;
 
-pub async fn start_server() {
+#[derive(Debug, Error)]
+pub enum Error {
+    #[error("Server error {0}")]
+    Server(#[from] std::io::Error),
+}
+
+pub async fn start_server() -> Result<(), Error> {
     let app = Router::new().route("/", get(get_pufa_word));
     let port: u16 = 3000;
     let addr = format!("0.0.0.0:{}", port);
 
-    let listener = tokio::net::TcpListener::bind(&addr).await.unwrap();
+    let listener = tokio::net::TcpListener::bind(&addr).await?;
     info!("Server started at http://{addr}, connect from localhost at http://localhost:{port}");
-    axum::serve(listener, app).await.unwrap();
+    axum::serve(listener, app).await?;
+
+    Ok(())
 }
 
 struct Response {
