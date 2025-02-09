@@ -1,4 +1,4 @@
-use crate::pufa;
+use crate::use_case::get_word_query::{Handler, Query};
 use axum::http::StatusCode;
 use axum::routing::get;
 use axum::{Json, Router};
@@ -68,7 +68,7 @@ impl ResponseBody {
 }
 
 async fn get_pufa_word() -> (StatusCode, Json<ResponseBody>) {
-    let pufa_word = pufa::get_cached_result().await;
+    let pufa_word = Handler::new(Query::new(60)).handle().await;
     let response = match pufa_word {
         Err(error) => Response::new(
             StatusCode::SERVICE_UNAVAILABLE,

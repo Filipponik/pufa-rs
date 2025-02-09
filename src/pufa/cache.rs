@@ -1,5 +1,3 @@
-use crate::pufa::main;
-use crate::pufa::main::PufaError;
 use chrono::{DateTime, Utc};
 use lazy_static::lazy_static;
 use tokio::sync::RwLock;
@@ -34,25 +32,32 @@ lazy_static! {
     });
 }
 
-pub async fn get_cached_pufa_word() -> Result<State, PufaError> {
-    let read_lock = STATE.read().await;
-    let seconds_diff: i64 = Utc::now().timestamp() - read_lock.updated_at.timestamp();
+pub struct Cache;
 
-    if !&read_lock.just_started && seconds_diff < 60 {
-        return Ok(read_lock.clone());
+impl Cache {
+    pub async fn has() -> bool {
+        let read_lock = STATE.read().await;
+        !read_lock.just_started
     }
-    drop(read_lock);
 
-    let pufa_word = main::Client::get_result().await;
-    match pufa_word {
-        Err(error) => Err(error),
-        Ok(word) => {
-            let mut write_lock = STATE.write().await;
-            write_lock.set_current_updated_at();
-            write_lock.set_last_word(&word);
-            write_lock.set_last_word(&word);
+    pub async fn is_actual(allowed_diff_seconds: u64) -> bool {
+        let read_lock = STATE.read().await;
 
-            Ok(write_lock.clone())
-        }
+        Utc::now()
+            .timestamp()
+            .abs_diff(read_lock.updated_at.timestamp())
+            < allowed_diff_seconds
+    }
+
+    pub async fn get() -> State {
+        let read_lock = STATE.read().await;
+        read_lock.clone()
+    }
+
+    pub async fn set(new_word: String) -> State {
+        let mut write_lock = STATE.write().await;
+        write_lock.set_current_updated_at();
+        write_lock.set_last_word(&new_word);
+        write_lock.clone()
     }
 }
