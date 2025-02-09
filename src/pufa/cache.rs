@@ -43,7 +43,7 @@ pub async fn get_cached_pufa_word() -> Result<State, PufaError> {
     }
     drop(read_lock);
 
-    let pufa_word = main::get_result().await;
+    let pufa_word = main::Client::get_result().await;
     match pufa_word {
         Err(error) => Err(error),
         Ok(word) => {
