@@ -5,22 +5,14 @@ use thiserror::Error;
 
 #[derive(Debug, Error)]
 pub enum PufaError {
+    #[error("Cannot get uuid")]
     UuidRequest,
+    #[error("Cannot parse uuid")]
     UuidParse,
+    #[error("Cannot get pufa word")]
     WordRequest,
+    #[error("Cannot parse pufa word")]
     WordParse,
-}
-
-impl std::fmt::Display for PufaError {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        let result: &str = match &self {
-            Self::UuidRequest => "uuid_request_failed",
-            Self::UuidParse => "uuid_parse_failed",
-            Self::WordRequest => "word_request_failed",
-            Self::WordParse => "word_parse_failed",
-        };
-        write!(f, "{result}")
-    }
 }
 
 pub async fn get_result() -> Result<String, PufaError> {
