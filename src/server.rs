@@ -5,6 +5,7 @@ use axum::{Json, Router};
 use serde::Serialize;
 use thiserror::Error;
 use tracing::info;
+use crate::pufa::old_cache::OldCache;
 
 #[derive(Debug, Error)]
 pub enum Error {
@@ -68,7 +69,7 @@ impl ResponseBody {
 }
 
 async fn get_pufa_word() -> (StatusCode, Json<ResponseBody>) {
-    let pufa_word = Handler::new(Query::new(60)).handle().await;
+    let pufa_word = Handler::new(Query::new(60)).handle(OldCache).await;
     let response = match pufa_word {
         Err(error) => Response::new(
             StatusCode::SERVICE_UNAVAILABLE,

@@ -1,4 +1,4 @@
-use crate::pufa::cache::{Cache, State};
+use crate::pufa::cache::{Cacheable, State};
 use crate::pufa::main::{Client, PufaError};
 
 pub struct Query {
@@ -25,15 +25,15 @@ impl Handler {
     /// # Errors
     ///
     /// Will return `PufaError` if cannot get pufa word
-    pub async fn handle(&self) -> Result<State, PufaError> {
-        if Cache::has().await && Cache::is_actual(self.query.cache_ttl).await {
-            return Ok(Cache::get().await);
+    pub async fn handle<T: Cacheable>(&self, cache: T) -> Result<State, PufaError> {
+        if cache.has().await && cache.is_actual(self.query.cache_ttl).await {
+            return Ok(cache.get().await);
         }
 
         let pufa_word = Client::get_result().await;
         match pufa_word {
             Err(error) => Err(error),
-            Ok(word) => Ok(Cache::set(word).await),
+            Ok(word) => Ok(cache.set(word).await),
         }
     }
 }
