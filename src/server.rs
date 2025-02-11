@@ -1,8 +1,9 @@
 use crate::pufa::rwlock_cache::RwLockCache;
-use crate::use_case::get_word_query::{Handler, Query};
+use crate::use_case::*;
 use axum::http::StatusCode;
 use axum::routing::get;
 use axum::{Json, Router};
+use chrono::Utc;
 use serde::Serialize;
 use thiserror::Error;
 use tracing::info;
@@ -14,7 +15,10 @@ pub enum Error {
 }
 
 pub async fn start() -> Result<(), Error> {
-    let app = Router::new().route("/", get(get_pufa_word));
+    let app = Router::new()
+        .route("/", get(get_cached_pufa_word))
+        .route("/actual", get(get_actual_pufa_word));
+
     let port: u16 = 3000;
     let addr = format!("0.0.0.0:{port}");
 
@@ -68,18 +72,41 @@ impl ResponseBody {
     }
 }
 
-async fn get_pufa_word() -> (StatusCode, Json<ResponseBody>) {
-    let pufa_word = Handler::new(Query::new(60)).handle(RwLockCache).await;
+async fn get_cached_pufa_word() -> (StatusCode, Json<ResponseBody>) {
+    let query = get_cached_word_query::Query::new(60);
+    let handler = get_cached_word_query::Handler::new(query);
+    let pufa_word = handler.handle(RwLockCache).await;
     let response = match pufa_word {
         Err(error) => Response::new(
             StatusCode::SERVICE_UNAVAILABLE,
             ResponseBody::new_error(&error.to_string()),
         ),
         Ok(cache_state) => Response::new(
-            StatusCode::SERVICE_UNAVAILABLE,
+            StatusCode::OK,
             ResponseBody::new_success(
                 &cache_state.last_word,
                 &cache_state.get_formatted_updated_at(),
+            ),
+        ),
+    };
+
+    response.to_axum_response()
+}
+
+async fn get_actual_pufa_word() -> (StatusCode, Json<ResponseBody>) {
+    let query = get_actual_word_query::Query;
+    let handler = get_actual_word_query::Handler::new(query);
+    let pufa_word = handler.handle().await;
+    let response = match pufa_word {
+        Err(error) => Response::new(
+            StatusCode::SERVICE_UNAVAILABLE,
+            ResponseBody::new_error(&error.to_string()),
+        ),
+        Ok(cache_state) => Response::new(
+            StatusCode::OK,
+            ResponseBody::new_success(
+                &cache_state,
+                &Utc::now().to_rfc3339(),
             ),
         ),
     };
