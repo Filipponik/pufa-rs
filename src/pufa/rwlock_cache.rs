@@ -5,9 +5,9 @@ use tokio::sync::RwLock;
 
 static STATE: Lazy<RwLock<Option<State>>> = Lazy::new(|| RwLock::new(None));
 
-pub struct NewCache;
+pub struct RwLockCache;
 
-impl Cacheable for NewCache {
+impl Cacheable for RwLockCache {
     async fn has(&self) -> bool {
         STATE.read().await.is_some()
     }
