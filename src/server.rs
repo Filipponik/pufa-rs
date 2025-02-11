@@ -1,5 +1,5 @@
 use crate::pufa::rwlock_cache::RwLockCache;
-use crate::use_case::*;
+use crate::use_case::{get_actual_word_query, get_cached_word_query};
 use axum::http::StatusCode;
 use axum::routing::get;
 use axum::{Json, Router};
@@ -104,10 +104,7 @@ async fn get_actual_pufa_word() -> (StatusCode, Json<ResponseBody>) {
         ),
         Ok(cache_state) => Response::new(
             StatusCode::OK,
-            ResponseBody::new_success(
-                &cache_state,
-                &Utc::now().to_rfc3339(),
-            ),
+            ResponseBody::new_success(&cache_state, &Utc::now().to_rfc3339()),
         ),
     };
 

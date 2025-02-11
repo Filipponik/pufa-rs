@@ -3,6 +3,7 @@ use crate::pufa::main::{Client, PufaError};
 pub struct Query;
 
 pub struct Handler {
+    #[allow(dead_code)]
     query: Query,
 }
 
