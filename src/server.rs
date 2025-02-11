@@ -1,3 +1,4 @@
+use crate::pufa::new_cache::NewCache;
 use crate::use_case::get_word_query::{Handler, Query};
 use axum::http::StatusCode;
 use axum::routing::get;
@@ -5,7 +6,6 @@ use axum::{Json, Router};
 use serde::Serialize;
 use thiserror::Error;
 use tracing::info;
-use crate::pufa::new_cache::NewCache;
 
 #[derive(Debug, Error)]
 pub enum Error {

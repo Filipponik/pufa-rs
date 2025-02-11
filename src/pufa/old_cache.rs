@@ -1,7 +1,7 @@
+use crate::pufa::cache::{Cacheable, State};
 use chrono::Utc;
 use lazy_static::lazy_static;
 use tokio::sync::RwLock;
-use crate::pufa::cache::{Cacheable, State};
 
 lazy_static! {
     static ref STATE: RwLock<State> = RwLock::new(State {

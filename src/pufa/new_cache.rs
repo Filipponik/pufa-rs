@@ -13,15 +13,12 @@ impl Cacheable for NewCache {
     }
 
     async fn is_actual(&self, allowed_diff_seconds: u64) -> bool {
-        match &*STATE.read().await {
-            None => false,
-            Some(state) => {
-                Utc::now()
-                    .timestamp()
-                    .abs_diff(state.updated_at.timestamp())
-                    < allowed_diff_seconds
-            }
-        }
+        STATE.read().await.as_ref().is_some_and(|state| {
+            Utc::now()
+                .timestamp()
+                .abs_diff(state.updated_at.timestamp())
+                < allowed_diff_seconds
+        })
     }
 
     async fn get(&self) -> Option<State> {

@@ -1,5 +1,5 @@
-use std::future::Future;
 use chrono::{DateTime, Utc};
+use std::future::Future;
 
 #[derive(Debug, Clone)]
 pub struct State {
@@ -8,7 +8,7 @@ pub struct State {
 }
 
 impl State {
-    pub fn new(last_word: String, updated_at: DateTime<Utc>) -> Self {
+    pub const fn new(last_word: String, updated_at: DateTime<Utc>) -> Self {
         Self {
             last_word,
             updated_at,
