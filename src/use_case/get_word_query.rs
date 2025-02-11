@@ -27,7 +27,10 @@ impl Handler {
     /// Will return `PufaError` if cannot get pufa word
     pub async fn handle<T: Cacheable>(&self, cache: T) -> Result<State, PufaError> {
         if cache.has().await && cache.is_actual(self.query.cache_ttl).await {
-            return Ok(cache.get().await);
+            return match cache.get().await {
+                Some(state) => Ok(state),
+                None => Err(PufaError::CacheGet)
+            };
         }
 
         let pufa_word = Client::get_result().await;

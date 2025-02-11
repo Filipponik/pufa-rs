@@ -8,6 +8,13 @@ pub struct State {
 }
 
 impl State {
+    pub fn new(last_word: String, updated_at: DateTime<Utc>) -> Self {
+        Self {
+            last_word,
+            updated_at,
+        }
+    }
+
     pub fn get_formatted_updated_at(&self) -> String {
         self.updated_at.to_rfc3339()
     }
@@ -24,6 +31,6 @@ impl State {
 pub trait Cacheable {
     fn has(&self) -> impl Future<Output = bool> + Send;
     fn is_actual(&self, allowed_diff_seconds: u64) -> impl Future<Output = bool> + Send;
-    fn get(&self) -> impl Future<Output = State> + Send;
+    fn get(&self) -> impl Future<Output = Option<State>> + Send;
     fn set(&self, new_word: String) -> impl Future<Output = State> + Send;
 }

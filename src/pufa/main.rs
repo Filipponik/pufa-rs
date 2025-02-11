@@ -13,6 +13,8 @@ pub enum PufaError {
     WordRequest,
     #[error("Cannot parse pufa word")]
     WordParse,
+    #[error("Cannot get from cache")]
+    CacheGet,
 }
 
 pub struct Client {}

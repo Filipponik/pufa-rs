@@ -27,9 +27,9 @@ impl Cacheable for OldCache {
             < allowed_diff_seconds
     }
 
-    async fn get(&self) -> State {
+    async fn get(&self) -> Option<State> {
         let read_lock = STATE.read().await;
-        read_lock.clone()
+        Some(read_lock.clone())
     }
 
     async fn set(&self, new_word: String) -> State {
