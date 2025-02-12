@@ -1,9 +1,12 @@
 use chrono::{DateTime, Utc};
 use std::future::Future;
+use serde::{Deserialize, Serialize};
+use chrono::serde::ts_seconds;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct State {
     pub last_word: String,
+    #[serde(with = "ts_seconds")]
     pub updated_at: DateTime<Utc>,
 }
 
