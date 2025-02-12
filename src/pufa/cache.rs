@@ -1,7 +1,7 @@
-use chrono::{DateTime, Utc};
-use std::future::Future;
-use serde::{Deserialize, Serialize};
 use chrono::serde::ts_seconds;
+use chrono::{DateTime, Utc};
+use serde::{Deserialize, Serialize};
+use std::future::Future;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct State {
