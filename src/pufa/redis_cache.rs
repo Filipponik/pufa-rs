@@ -10,8 +10,9 @@ pub struct RedisCache {
 impl RedisCache {
     const KEY: &'static str = "current_pufa_word";
 
-    pub fn new(conn: String) -> RedisCache {
-        RedisCache { conn }
+    #[allow(dead_code)]
+    pub const fn new(conn: String) -> Self {
+        Self { conn }
     }
 
     pub async fn connect(&self) -> MultiplexedConnection {
@@ -43,17 +44,10 @@ impl Cacheable for RedisCache {
 
     async fn get(&self) -> Option<State> {
         let mut con = self.connect().await;
-        let val: Option<String> = con.get(Self::KEY).await.unwrap();
-        if let Some(value) = val {
-            let parsed_state = serde_json::from_str::<State>(&value);
-            if let Ok(state) = parsed_state {
-                Some(state)
-            } else {
-                None
-            }
-        } else {
-            None
-        }
+        con.get::<&str, Option<String>>(Self::KEY)
+            .await
+            .unwrap()
+            .and_then(|value| serde_json::from_str::<State>(&value).ok())
     }
 
     async fn set(&self, new_word: String) -> State {
