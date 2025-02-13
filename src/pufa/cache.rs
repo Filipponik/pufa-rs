@@ -2,6 +2,8 @@ use chrono::serde::ts_seconds;
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use std::future::Future;
+use crate::pufa::redis_cache::RedisCache;
+use crate::pufa::rwlock_cache::RwLockCache;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct State {
@@ -36,4 +38,12 @@ pub trait Cacheable {
     fn is_actual(&self, allowed_diff_seconds: u64) -> impl Future<Output = bool> + Send;
     fn get(&self) -> impl Future<Output = Option<State>> + Send;
     fn set(&self, new_word: String) -> impl Future<Output = State> + Send;
+}
+
+pub fn make(driver_name: &str) -> impl Cacheable {
+    match driver_name {
+        "rwlock" => RwLockCache,
+        "redis" => RedisCache::new("redis://127.0.0.1".to_string()),
+        _ => unimplemented!("Cache driver is not implemented for {}", driver_name),
+    }
 }
