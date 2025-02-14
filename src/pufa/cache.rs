@@ -39,11 +39,3 @@ pub trait Cacheable {
     fn get(&self) -> impl Future<Output = Option<State>> + Send;
     fn set(&self, new_word: String) -> impl Future<Output = State> + Send;
 }
-
-pub fn make(driver_name: &str) -> impl Cacheable {
-    match driver_name {
-        "rwlock" => RwLockCache,
-        "redis" => RedisCache::new("redis://127.0.0.1".to_string()),
-        _ => unimplemented!("Cache driver is not implemented for {}", driver_name),
-    }
-}
