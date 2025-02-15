@@ -2,8 +2,6 @@ use chrono::serde::ts_seconds;
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use std::future::Future;
-use crate::pufa::redis_cache::RedisCache;
-use crate::pufa::rwlock_cache::RwLockCache;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct State {
