@@ -5,6 +5,7 @@ use tokio::sync::RwLock;
 
 static STATE: Lazy<RwLock<Option<State>>> = Lazy::new(|| RwLock::new(None));
 
+#[derive(Clone)]
 pub struct RwLockCache;
 
 impl Cacheable for RwLockCache {

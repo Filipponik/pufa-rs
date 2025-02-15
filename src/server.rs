@@ -1,12 +1,15 @@
+use std::sync::Arc;
 use crate::pufa::rwlock_cache::RwLockCache;
 use crate::use_case::{get_actual_word_query, get_cached_word_query};
 use axum::http::StatusCode;
 use axum::routing::get;
 use axum::{Json, Router};
+use axum::extract::State;
 use chrono::Utc;
 use serde::Serialize;
 use thiserror::Error;
 use tracing::info;
+use crate::pufa::cache::Cacheable;
 
 #[derive(Debug, Error)]
 pub enum Error {
@@ -14,10 +17,18 @@ pub enum Error {
     Server(#[from] std::io::Error),
 }
 
+#[derive(Clone)]
+struct AppState<T: Cacheable + Clone> {
+    cache_driver: T
+}
+
 pub async fn start() -> Result<(), Error> {
+    let state = Arc::new(AppState { cache_driver: RwLockCache });
+
     let app = Router::new()
         .route("/", get(get_cached_pufa_word))
-        .route("/actual", get(get_actual_pufa_word));
+        .route("/actual", get(get_actual_pufa_word))
+        .with_state(state);
 
     let port: u16 = 3000;
     let addr = format!("0.0.0.0:{port}");
@@ -72,10 +83,10 @@ impl ResponseBody {
     }
 }
 
-async fn get_cached_pufa_word() -> (StatusCode, Json<ResponseBody>) {
+async fn get_cached_pufa_word(State(state): State<Arc<AppState<RwLockCache>>>) -> (StatusCode, Json<ResponseBody>) {
     let query = get_cached_word_query::Query::new(60);
     let handler = get_cached_word_query::Handler::new(query);
-    let pufa_word = handler.handle(RwLockCache).await;
+    let pufa_word = handler.handle(state.cache_driver.clone()).await;
     let response = match pufa_word {
         Err(error) => Response::new(
             StatusCode::SERVICE_UNAVAILABLE,

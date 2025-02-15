@@ -3,6 +3,7 @@ use chrono::Utc;
 use redis::aio::MultiplexedConnection;
 use redis::AsyncCommands;
 
+#[derive(Clone)]
 pub struct RedisCache {
     conn: String,
 }
