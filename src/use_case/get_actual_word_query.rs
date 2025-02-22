@@ -1,4 +1,4 @@
-use crate::pufa::main::{Client, PufaError};
+use crate::pufa::{Client, PufaError};
 
 pub struct Query;
 
