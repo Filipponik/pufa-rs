@@ -17,6 +17,6 @@ impl Handler {
     ///
     /// Will return `PufaError` if cannot get pufa word
     pub async fn handle(&self) -> Result<String, PufaError> {
-        Client::get_result().await
+        Client::get_word().await
     }
 }

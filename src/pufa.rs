@@ -20,10 +20,10 @@ pub enum PufaError {
     CacheGet,
 }
 
-pub struct Client {}
+pub struct Client;
 
 impl Client {
-    pub async fn get_result() -> Result<String, PufaError> {
+    pub async fn get_word() -> Result<String, PufaError> {
         let result: String = Self::get_current_uuid().await?;
         let uuid: String = Self::get_uuid_from_js(&result)?;
         let date: String = chrono::offset::Utc::now().format("%Y-%m-%d").to_string();

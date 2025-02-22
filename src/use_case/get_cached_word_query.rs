@@ -30,7 +30,7 @@ impl Handler {
             return cache.get().await.ok_or(PufaError::CacheGet);
         }
 
-        let pufa_word = Client::get_result().await;
+        let pufa_word = Client::get_word().await;
         match pufa_word {
             Err(error) => Err(error),
             Ok(word) => Ok(cache.set(word).await),
