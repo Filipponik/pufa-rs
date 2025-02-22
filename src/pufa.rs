@@ -55,8 +55,8 @@ impl Client {
         let matched = Regex::new(
             r"[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}",
         )
-            .unwrap()
-            .find(js_code);
+        .unwrap()
+        .find(js_code);
 
         matched.map_or(Err(PufaError::UuidRequest), |value| {
             Ok(value.as_str().to_string())
@@ -104,5 +104,4 @@ pub mod cache {
         fn get(&self) -> impl Future<Output = Option<State>> + Send;
         fn set(&self, new_word: String) -> impl Future<Output = State> + Send;
     }
-
 }
